@@ -20,7 +20,7 @@
 git clone https://github.com/vientofactory/live-chat-relay.git
 ```
 
-## Set env
+## set env
 
 ```
 PORT="3000"
