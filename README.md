@@ -6,6 +6,9 @@
 
 코드가 매우 더럽습니다. 시간 날 때 리팩토링 해볼게요...
 
+# Screenshots
+![image](https://github.com/vientofactory/live-chat-relay/assets/107330816/2bd4229a-71b6-4fd8-9e46-fa5afd21c4f0)
+
 # How to use
 
 ## clone this project
