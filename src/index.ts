@@ -1,13 +1,11 @@
 import "dotenv/config";
-import { LiveChatServer } from "./server";
+import { expressServer } from "./server";
 import { utils } from "./modules";
 import http from "http";
 import consola from "consola";
 
 const port = utils.normalizePort(process.env.PORT);
-
-export const liveChatServer = new LiveChatServer();
-export const httpServer = http.createServer(liveChatServer.app);
+export const httpServer = http.createServer(expressServer.app);
 
 httpServer.listen(port, () => {
   consola.ready({
