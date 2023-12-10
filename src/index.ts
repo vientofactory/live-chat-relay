@@ -6,8 +6,8 @@ import http from "http";
 import consola from "consola";
 
 const port = utils.normalizePort(process.env.PORT);
-export const expressServer = new LiveChatServer();
-export const httpServer = http.createServer(expressServer.app);
+export const liveChatServer = new LiveChatServer();
+export const httpServer = http.createServer(liveChatServer.app);
 export const io = new Server(httpServer);
 
 httpServer.listen(port, () => {

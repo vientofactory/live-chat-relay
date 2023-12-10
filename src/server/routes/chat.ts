@@ -10,6 +10,10 @@ class ChatRouter {
   }
   private async MainController(req: Request, res: Response) {
     try {
+      const secret = req.headers["secret"];
+      if (!secret || secret !== process.env.SECRET_KEY) {
+        res.sendStatus(403);
+      }
       io.emit("message", req.body);
       res.json({
         result: "Message sent!",
