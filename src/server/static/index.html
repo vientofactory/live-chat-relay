@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatBox</title>
+    <script src="//cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+    <style type="text/css" id="chatbox_style"></style>
+    <link rel="stylesheet" type="text/css" href="//assets.twip.kr/css/webfont.v2.css" />
+    <link rel="stylesheet" type="text/css" href="//assets.twip.kr/lib/animate.min.css" />
+  </head>
+  <body>
+    <div id="log"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var ChatBox = {
+        $style: $("#chatbox_style"),
+        $log: $("#log"),
+        defaultStyle: {},
+        key: "8mBGOr6weo",
+        url: null,
+        socket: null,
+        badge_sets: null,
+        lcnt: 0,
+        delay: 0,
+        name: null,
+        ignoreRegex: null,
+        hide_bot: !1,
+        chat: null,
+        config: {
+          chatbox_key: "8mBGOr6weo",
+          chatbox_name: "",
+          user_id: "244187664",
+          style: "twitch",
+          font_face: "Jeju Gothic",
+          font_size: "28",
+          background_color: "rgba(70,255,122,0.84)",
+          text_color: "#ffffff",
+          hide_msg_after: "216",
+          delay: "0",
+          reverse: "0",
+          created_at: "2020-12-09 08:10:22",
+          name: "app6460",
+        },
+        default_colors: [
+          ["Red", "#FF0000"],
+          ["Blue", "#0000FF"],
+          ["Green", "#00FF00"],
+          ["FireBrick", "#B22222"],
+          ["Coral", "#FF7F50"],
+          ["YellowGreen", "#9ACD32"],
+          ["OrangeRed", "#FF4500"],
+          ["SeaGreen", "#2E8B57"],
+          ["GoldenRod", "#DAA520"],
+          ["Chocolate", "#D2691E"],
+          ["CadetBlue", "#5F9EA0"],
+          ["DodgerBlue", "#1E90FF"],
+          ["HotPink", "#FF69B4"],
+          ["BlueViolet", "#8A2BE2"],
+          ["SpringGreen", "#00FF7F"],
+        ],
+        user_to_color: {},
+        get_color_for_user: function (name) {
+          var color;
+          if (typeof ChatBox.user_to_color[name] !== "undefined") {
+            color = ChatBox.user_to_color[name];
+          } else {
+            var n = name.charCodeAt(0) + name.charCodeAt(name.length - 1);
+            color = ChatBox.default_colors[n % ChatBox.default_colors.length][1];
+          }
+          ChatBox.user_to_color[name] = color;
+          return color;
+        },
+        affectStyle: function (config) {
+          var style = "";
+          if (config.style === "custom") {
+            style = config.custom_style_css;
+          } else {
+            style = ChatBox.defaultStyle[config.style];
+          }
+          if (!style) return;
+          style = style.replace(/\$([^; \.\'\}]+)/g, function (t, n) {
+            if (n === "message_hide_delays") return (parseInt(config.hide_msg_after, 10) || 1e5) + "s";
+            if (n === "font_sizepx") return config.font_size + "px";
+            return config[n];
+          });
+          style += "span.message > img.emote { height: auto !important; vertical-align: text-top; }";
+          ChatBox.$style.text(style);
+        },
+        init: function () {
+          ChatBox.affectConfig(ChatBox.config);
+        },
+        reload: function () {
+          ChatBox.affectConfig(ChatBox.config);
+        },
+        affectConfig: function (config) {
+          ChatBox.affectStyle(config);
+          ChatBox.name = config.name;
+          ChatBox.delay = parseInt(config.delay, 10) * 1000;
+          if (config.reverse !== "0") {
+            $("body").addClass("reverse");
+          } else {
+            $("body").removeClass("reverse");
+          }
+        },
+        removeMessage: function (username) {
+          var $elems = $('div[data-from="' + username + '"]');
+          $elems.remove();
+          ChatBox.lcnt = $("#log > div").length;
+        },
+        processMessage: function (user, message, self) {
+          if (ChatBox.lcnt >= 200) $("#log > div").eq(0).remove();
+          else ++ChatBox.lcnt;
+          message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;") + " ";
+          var matches,
+            _message = message;
+          var userColor = user.color != null ? user.color : ChatBox.get_color_for_user(user.name);
+          var colorStyle = ' style="color: ' + userColor + '"';
+          var badgeHTML = "";
+          var classes = [];
+          var name = user.name;
+          setTimeout(
+            ChatBox.appendMessage,
+            ChatBox.delay,
+            '<div class="' +
+              classes.join(" ") +
+              '" style="--color: ' +
+              userColor +
+              '">' +
+              '<span class="meta" ' +
+              colorStyle +
+              '><span class="name">' +
+              name +
+              "</span>" +
+              '<span class="colon">:</span></span>' +
+              '<span class="message">' +
+              message +
+              "</span></div>"
+          );
+        },
+        appendMessage: function (html) {
+          ChatBox.$log.append(html);
+        },
+      };
+
+      $(document).ready(function () {
+        ChatBox.defaultStyle = {
+          twitch:
+            "#log>div.deleted {\n  visibility: hidden;\n}\n#log .emote_wrap {\n  position: relative;\n}\n#log .emote_wrap img.emoticon {\n  height: $font_sizepx;\n  vertical-align: middle;\n  margin: -5px 0;\n}\n.badge,\n.colon,\n.name {\n  display: inline-block;\n  vertical-align: top\n}\n#log .meta {\n  padding-right: 4px;\n  position: relative;\n}\n.badge {\n  margin-right: 4px;\n  height: 1em\n}\n.name {\n  font-weight: 700;\n  margin-left: .1em\n}\n.colon,\n.name {\n  height: 24px\n}\nbody,\nhtml {\n  height: 100%;\n  overflow: hidden\n}\n#log {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  padding: 0 10px 10px;\n  width: 100%;\n  box-sizing: border-box;\n  text-shadow: 0 0 1px #666,1px 1px 0 #000;\n}\nbody {\n  -webkit-mask-image: -webkit-gradient(linear,left 10%,left top,from(rgba(0,0,0,1)),to(rgba(0,0,0,0)));\n  -webkit-mask-image: -webkit-gradient(linear,left 20%,left top,from(rgba(0,0,0,1)),to(rgba(0,0,0,0)));\n}\n#log>div {\n  padding-bottom: .25em;\n  word-wrap: break-word;\n}\nbody {\n  background: $background_color;\n  color: $text_color;\n  font-size: $font_sizepx;\n}\n#log {\n  font: 0.8em '$font_face', serif;\n}\n#log>div {\n  animation: fadeOut 1s ease $message_hide_delays forwards;\n}\nspan.message > img {\n  height: 1em;\n}\nspan.message > img.emote {\n  height: auto;\n  vertical-align: text-top;\n}\n",
+        };
+        ChatBox.init();
+      });
+      var socket = io();
+      socket.on("message", function (data) {
+        console.log(data);
+        ChatBox.processMessage(data.user, data.message);
+      });
+    </script>
+  </body>
+</html>

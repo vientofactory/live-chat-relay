@@ -2,6 +2,7 @@ import express, { json, urlencoded, static as static_, Request, Response, Applic
 import { ILiveChatServerConfig } from "../types";
 import { readdirSync } from "fs";
 import { join } from "path";
+import http from "http";
 import asyncify from "express-asyncify";
 import consola from "consola";
 
@@ -24,14 +25,13 @@ export class LiveChatServer {
       })
     );
     this.app.use(
-      static_("static", {
+      static_(join(__dirname, "static"), {
         extensions: ["html"],
       })
     );
     this.app.disable("x-powered-by");
   }
   private setRouters() {
-    this.app.use("/", require("./main"));
     readdirSync(join(__dirname, "routes")).forEach((file) => {
       if (file.endsWith(".js")) {
         try {

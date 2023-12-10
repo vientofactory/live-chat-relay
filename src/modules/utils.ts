@@ -3,9 +3,9 @@ class Utility {
     if (typeof port === "number" && port >= 0) {
       return port;
     } else if (typeof port === "number" && port < 0) {
-      return 3001;
+      return 3000;
     } else if (isNaN(Number(port))) {
-      return 3001;
+      return 3000;
     } else {
       return Number(port);
     }
