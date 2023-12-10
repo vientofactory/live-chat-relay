@@ -16,16 +16,8 @@ git clone https://github.com/vientofactory/live-chat-relay.git
 
 ## install dependencies
 
-npm:
-
 ```
 npm install
-```
-
-yarn:
-
-```
-yarn
 ```
 
 ## build
