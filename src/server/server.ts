@@ -54,6 +54,6 @@ export class LiveChatServer {
   // }
 }
 
-export const expressServer = new LiveChatServer();
-export const httpServer = http.createServer(expressServer.app);
-export const io = new Server(httpServer);
+// export const expressServer = new LiveChatServer();
+// export const httpServer = http.createServer(expressServer.app);
+// export const io = new Server(httpServer);

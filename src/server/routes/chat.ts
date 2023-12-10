@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { io } from "../server";
+import { io } from "../..";
 import consola from "consola";
 
 class ChatRouter {
