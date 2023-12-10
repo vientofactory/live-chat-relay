@@ -12,7 +12,7 @@ class ChatRouter {
     try {
       const secret = req.headers["secret"];
       if (!secret || secret !== process.env.SECRET_KEY) {
-        res.sendStatus(403);
+        return res.sendStatus(403);
       }
       io.emit("message", req.body);
       res.json({
