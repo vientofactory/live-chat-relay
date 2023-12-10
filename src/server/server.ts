@@ -1,5 +1,4 @@
 import express, { json, urlencoded, static as static_, Application } from "express";
-import { ILiveChatServerConfig } from "../types";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { Server } from "socket.io";
