@@ -1,13 +1,11 @@
-import express, { json, urlencoded, static as static_, Request, Response, Application } from "express";
+import express, { json, urlencoded, static as static_, Application } from "express";
 import { ILiveChatServerConfig } from "../types";
 import { readdirSync } from "fs";
 import { join } from "path";
 import { Server } from "socket.io";
-import { httpServer } from "..";
 import asyncify from "express-asyncify";
 import consola from "consola";
-
-export const io = new Server(httpServer);
+import http from "http";
 
 export class LiveChatServer {
   public readonly app: Application;
@@ -47,12 +45,16 @@ export class LiveChatServer {
       }
     });
   }
-  public start(param: ILiveChatServerConfig) {
-    this.app.listen(param.port, () => {
-      consola.ready({
-        message: `Server listening on port ${param.port}`,
-        badge: true,
-      });
-    });
-  }
+  // public start(param: ILiveChatServerConfig) {
+  //   this.app.listen(param.port, () => {
+  //     consola.ready({
+  //       message: `Server listening on port ${param.port}`,
+  //       badge: true,
+  //     });
+  //   });
+  // }
 }
+
+const expressServer = new LiveChatServer();
+export const httpServer = http.createServer(expressServer.app);
+export const io = new Server(httpServer);

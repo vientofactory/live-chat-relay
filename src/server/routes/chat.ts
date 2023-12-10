@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { io } from "../server";
+import consola from "consola";
 
 class ChatRouter {
   public readonly router: Router;
@@ -8,10 +9,17 @@ class ChatRouter {
     this.router.post("/", this.MainController);
   }
   private async MainController(req: Request, res: Response) {
-    io.emit("message", req.body);
-    res.json({
-      result: "Message sent!",
-    });
+    try {
+      io.emit("message", req.body);
+      res.json({
+        result: "Message sent!",
+      });
+    } catch (err) {
+      consola.error(err);
+      res.status(500).json({
+        result: "Internal server error",
+      });
+    }
   }
 }
 
