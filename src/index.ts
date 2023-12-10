@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { LiveChatServer } from "./server";
-import { utils } from "./module";
+import { utils } from "./modules";
 
 const port = utils.normalizePort(process.env.PORT);
 
