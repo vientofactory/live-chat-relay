@@ -1,8 +1,5 @@
 import { Router, Request, Response } from "express";
-import { Server } from "socket.io";
-import { server } from "../..";
-
-const io = new Server(server);
+import { io } from "../server";
 
 class ChatRouter {
   public readonly router: Router;

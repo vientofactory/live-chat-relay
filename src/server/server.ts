@@ -2,9 +2,12 @@ import express, { json, urlencoded, static as static_, Request, Response, Applic
 import { ILiveChatServerConfig } from "../types";
 import { readdirSync } from "fs";
 import { join } from "path";
-import http from "http";
+import { Server } from "socket.io";
+import { httpServer } from "..";
 import asyncify from "express-asyncify";
 import consola from "consola";
+
+export const io = new Server(httpServer);
 
 export class LiveChatServer {
   public readonly app: Application;

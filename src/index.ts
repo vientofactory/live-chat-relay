@@ -6,10 +6,10 @@ import consola from "consola";
 
 const port = utils.normalizePort(process.env.PORT);
 
-const expressServer = new LiveChatServer();
-export const server = http.createServer(expressServer.app);
+export const liveChatServer = new LiveChatServer();
+export const httpServer = http.createServer(liveChatServer.app);
 
-server.listen(port, () => {
+httpServer.listen(port, () => {
   consola.ready({
     message: `Server listening on port ${port}`,
     badge: true,
