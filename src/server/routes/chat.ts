@@ -15,12 +15,12 @@ class ChatRouter {
         return res.sendStatus(403);
       }
       io.emit("message", req.body);
-      res.json({
+      return res.json({
         result: "Message sent!",
       });
     } catch (err) {
       consola.error(err);
-      res.status(500).json({
+      return res.status(500).json({
         result: "Internal server error",
       });
     }
